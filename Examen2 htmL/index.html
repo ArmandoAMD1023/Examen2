@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Libros</title>
+</head>
+<body>
+    <h1>Listado de Libros</h1>
+
+    <table id="libros-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Capítulos</th>
+                <th>Páginas</th>
+                <th>Precio</th>
+                <th>Autor ID</th>
+                <th>Autor</th>
+            </tr>
+        </thead>
+        <tbody id="libros-lista"></tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const librosLista = document.getElementById('libros-lista');
+
+            fetch('http://localhost:5126/api/Libros/TodosLosLibros')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error de red o respuesta no exitosa');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                console.log('Datos recibidos:', data);
+                    // Crear el contenido HTML para la tabla de libros
+                    const librosHTML = data.response.map(libro => `
+                        <tr>
+                            <td>${libro.id}</td>
+                            <td>${libro.titulo}</td>
+                            <td>${libro.capitulos}</td>
+                            <td>${libro.paginas}</td>
+                            <td>${libro.precio}</td>
+                            <td>${libro.autorId}</td>
+                            <td>${libro.autor.nombre}</td>
+                        </tr>
+                    `).join('');
+
+                    // Mostrar la tabla de libros en el elemento HTML
+                    librosLista.innerHTML = librosHTML;
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos:', error);
+                    librosLista.innerHTML = `<tr><td colspan="7">Error al obtener los datos. Consulta la consola para más detalles.</td></tr>`;
+                });
+
+        });
+    </script>
+    <style>
+        /* Pegar el CSS aquí */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+    
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+    
+        #libros-table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    
+        #libros-table th, #libros-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+    
+        #libros-table th {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+    
+        #libros-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    
+        #libros-table tbody tr:hover {
+            background-color: #ddd;
+        }
+    </style>
+    
+</body>
+</html>
